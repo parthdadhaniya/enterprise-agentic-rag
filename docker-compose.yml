@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  # 1. Redis Task Broker & Memory Cache
+  redis:
+    image: redis:7-alpine
+    container_name: rag_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  # 2. FastAPI Web API & UI
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rag_api
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      - REDIS_URL=redis://127.0.0.1:6379/0
+      - GROQ_API_KEY=${GROQ_API_KEY}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+    volumes:
+      - ./chroma_data:/app/chroma_data
+    depends_on:
+      - redis
+
+  # 3. Celery Background Worker
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rag_worker
+    restart: unless-stopped
+    network_mode: host
+    command: celery -A app.tasks.worker.celery_app worker --loglevel=info --pool=solo
+    environment:
+      - REDIS_URL=redis://127.0.0.1:6379/0
+      - GROQ_API_KEY=${GROQ_API_KEY}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+    volumes:
+      - ./chroma_data:/app/chroma_data
+    depends_on:
+      - redis
+
+volumes:
+  redis_data:
+    driver: local

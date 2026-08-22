@@ -1,0 +1,20 @@
+# Environment & Secrets
+.env
+*.env
+
+# Python & Virtualenv
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+.venv/
+
+# Vector Store & Local Data
+chroma_data/
+*.sqlite3
+*.db
+
+# Docker & Logs
+*.log
+.docker/

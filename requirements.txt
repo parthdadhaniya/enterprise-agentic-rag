@@ -1,0 +1,14 @@
+fastapi>=0.110.0
+uvicorn[standard]>=0.28.0
+pydantic>=2.6.0
+celery>=5.3.6
+redis>=5.0.2
+chromadb>=0.4.24
+langchain-core>=0.1.30
+langgraph>=0.0.30
+langchain-groq>=0.1.0
+langchain-google-genai>=1.0.0
+pypdf>=4.1.0
+langchain-text-splitters>=0.0.1
+python-multipart>=0.0.9
+python-dotenv>=1.0.1
